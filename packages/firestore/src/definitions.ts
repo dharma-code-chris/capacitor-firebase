@@ -821,6 +821,89 @@ export interface DeleteField extends FieldValue {
   _methodName: 'deleteField';
 }
 
+export class Timestamp {
+  readonly seconds: number;
+  readonly nanoseconds: number;
+
+  constructor(seconds: number, nanoseconds = 0) {
+    if (!Number.isInteger(seconds)) {
+      throw new Error('Invalid seconds value: must be an integer');
+    }
+    if (!Number.isInteger(nanoseconds) || nanoseconds < 0 || nanoseconds > 999999999) {
+      throw new Error('Invalid nanoseconds value: must be an integer between 0 and 999,999,999 inclusive');
+    }
+
+    // Validate timestamp is within a valid date range
+    // See https://262.ecma-international.org/5.1/#sec-15.9.1.1
+    const minSeconds = -8_640_000_000_000;
+    const maxSeconds = 8_640_000_000_000;
+    if (seconds < minSeconds || seconds > maxSeconds) {
+      throw new Error(`Seconds must be between ${minSeconds} and ${maxSeconds}, inclusive. Received: ${seconds}`);
+    }
+
+    this.seconds = seconds;
+    this.nanoseconds = nanoseconds;
+  }
+
+  static now(): Timestamp {
+    const now = Date.now();
+    return Timestamp.fromMillis(now);
+  }
+
+  static fromDate(date: Date): Timestamp {
+    return Timestamp.fromMillis(date.getTime());
+  }
+
+  static fromMillis(milliseconds: number): Timestamp {
+    if (!Number.isFinite(milliseconds)) {
+      throw new Error('Invalid milliseconds value: must be a finite number');
+    }
+    const seconds = Math.floor(milliseconds / 1000);
+    const nanoseconds = Math.floor((milliseconds % 1000) * 1000000);
+    return new Timestamp(seconds, nanoseconds);
+  }
+
+  toDate(): Date {
+    return new Date(this.toMillis());
+  }
+
+  toMillis(): number {
+    return this.seconds * 1000 + this.nanoseconds / 1000000;
+  }
+
+  _compareTo(other: Timestamp): number {
+    if (this.seconds !== other.seconds) {
+      return this.seconds - other.seconds;
+    }
+    return this.nanoseconds - other.nanoseconds;
+  }
+
+  isEqual(other: Timestamp): boolean {
+    return this.seconds === other.seconds && this.nanoseconds === other.nanoseconds;
+  }
+
+  toString(): string {
+    const date = this.toDate().toISOString();
+    if (this.nanoseconds === 0) {
+      return date.replace('.000Z', 'Z');
+    }
+    const nanoStr = this.nanoseconds.toString().padStart(9, '0');
+    return `${date.slice(0, -4)}.${nanoStr}Z`;
+  }
+
+  toJSON(): { seconds: number; nanoseconds: number } {
+    return {
+      seconds: this.seconds,
+      nanoseconds: this.nanoseconds
+    };
+  }
+
+  valueOf(): string {
+    const nanoStr = this.nanoseconds.toString().padStart(9, '0');
+    return `${this.seconds}.${nanoStr}`;
+  }
+}
+
 /**
  * @since 5.2.0
  */
