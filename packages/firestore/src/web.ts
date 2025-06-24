@@ -207,9 +207,12 @@ export class FirebaseFirestoreWeb
     options: GetCountFromServerOptions,
   ): Promise<GetCountFromServerResult> {
     const firestore = getFirestore();
-    const { reference } = options;
-    const coll = collection(firestore, reference);
-    const snapshot = await getCountFromServer(coll);
+    const { reference, compositeFilter } = options;
+    let qry: Query = collection(firestore, reference);
+    if (compositeFilter) {
+      qry = query(qry, compositeFilter);
+    }
+    const snapshot = await getCountFromServer(qry);
     return { count: snapshot.data().count };
   }
 

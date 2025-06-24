@@ -53,7 +53,7 @@ export interface FirebaseFirestorePlugin {
     options: GetCollectionGroupOptions,
   ): Promise<GetCollectionGroupResult<T>>;
   /**
-   * Fetches the number of documents in a collection.
+   * Fetches the number of documents in a collection, optionally filtered for aggregation.
    *
    * @since 6.4.0
    */
@@ -545,6 +545,12 @@ export interface GetCountFromServerOptions {
    * @since 6.4.0
    */
   reference: string;
+  /**
+   * An optional composite filter to aggregate the count.
+   *
+   * @since @dharma-code-chris/capacitor-firebase-firestore 1.0.0
+   */
+  compositeFilter?: QueryCompositeFilterConstraint;
 }
 
 /**
