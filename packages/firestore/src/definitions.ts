@@ -829,8 +829,14 @@ export class Timestamp {
     if (!Number.isInteger(seconds)) {
       throw new Error('Invalid seconds value: must be an integer');
     }
-    if (!Number.isInteger(nanoseconds) || nanoseconds < 0 || nanoseconds > 999999999) {
-      throw new Error('Invalid nanoseconds value: must be an integer between 0 and 999,999,999 inclusive');
+    if (
+      !Number.isInteger(nanoseconds) ||
+      nanoseconds < 0 ||
+      nanoseconds > 999999999
+    ) {
+      throw new Error(
+        'Invalid nanoseconds value: must be an integer between 0 and 999,999,999 inclusive',
+      );
     }
 
     // Validate timestamp is within a valid date range
@@ -838,7 +844,9 @@ export class Timestamp {
     const minSeconds = -8_640_000_000_000;
     const maxSeconds = 8_640_000_000_000;
     if (seconds < minSeconds || seconds > maxSeconds) {
-      throw new Error(`Seconds must be between ${minSeconds} and ${maxSeconds}, inclusive. Received: ${seconds}`);
+      throw new Error(
+        `Seconds must be between ${minSeconds} and ${maxSeconds}, inclusive. Received: ${seconds}`,
+      );
     }
 
     this.seconds = seconds;
@@ -879,7 +887,9 @@ export class Timestamp {
   }
 
   isEqual(other: Timestamp): boolean {
-    return this.seconds === other.seconds && this.nanoseconds === other.nanoseconds;
+    return (
+      this.seconds === other.seconds && this.nanoseconds === other.nanoseconds
+    );
   }
 
   toString(): string {
@@ -894,7 +904,7 @@ export class Timestamp {
   toJSON(): { seconds: number; nanoseconds: number } {
     return {
       seconds: this.seconds,
-      nanoseconds: this.nanoseconds
+      nanoseconds: this.nanoseconds,
     };
   }
 
@@ -903,6 +913,14 @@ export class Timestamp {
     return `${this.seconds}.${nanoStr}`;
   }
 }
+
+export const serverTimestamp = (): ServerTimestamp | Timestamp => ({
+  _methodName: 'serverTimestamp',
+});
+
+export const deleteField = (): DeleteField => ({
+  _methodName: 'deleteField',
+});
 
 /**
  * @since 5.2.0
