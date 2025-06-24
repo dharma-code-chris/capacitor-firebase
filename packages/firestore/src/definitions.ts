@@ -879,13 +879,6 @@ export class Timestamp {
     return this.seconds * 1000 + this.nanoseconds / 1000000;
   }
 
-  _compareTo(other: Timestamp): number {
-    if (this.seconds !== other.seconds) {
-      return this.seconds - other.seconds;
-    }
-    return this.nanoseconds - other.nanoseconds;
-  }
-
   isEqual(other: Timestamp): boolean {
     return (
       this.seconds === other.seconds && this.nanoseconds === other.nanoseconds
