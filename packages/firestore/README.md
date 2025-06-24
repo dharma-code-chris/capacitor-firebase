@@ -440,7 +440,7 @@ Reads the collection group referenced by the specified reference.
 getCountFromServer(options: GetCountFromServerOptions) => Promise<GetCountFromServerResult>
 ```
 
-Fetches the number of documents in a collection.
+Fetches the number of documents in a collection, optionally filtered for aggregation.
 
 | Param         | Type                                                                            |
 | ------------- | ------------------------------------------------------------------------------- |
@@ -853,9 +853,10 @@ Remove all listeners for this plugin.
 
 #### GetCountFromServerOptions
 
-| Prop            | Type                | Description                                                                         | Since |
-| --------------- | ------------------- | ----------------------------------------------------------------------------------- | ----- |
-| **`reference`** | <code>string</code> | The reference as a string, with path components separated by a forward slash (`/`). | 6.4.0 |
+| Prop                  | Type                                                                                      | Description                                                                         | Since |
+| --------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ----- |
+| **`reference`**       | <code>string</code>                                                                       | The reference as a string, with path components separated by a forward slash (`/`). | 6.4.0 |
+| **`compositeFilter`** | <code><a href="#querycompositefilterconstraint">QueryCompositeFilterConstraint</a></code> | An optional composite filter to aggregate the count.                                |       |
 
 
 #### UseEmulatorOptions

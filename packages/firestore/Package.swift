@@ -2,11 +2,11 @@
 import PackageDescription
 
 let package = Package(
-    name: "CapacitorFirebaseFirestore",
+    name: "DharmaCodeChrisCapacitorFirebaseFirestore",
     platforms: [.iOS(.v14)],
     products: [
         .library(
-            name: "CapacitorFirebaseFirestore",
+            name: "DharmaCodeChrisCapacitorFirebaseFirestore",
             targets: ["FirebaseFirestorePlugin"])
     ],
     dependencies: [

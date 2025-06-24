@@ -1,6 +1,6 @@
 {
-  "name": "@capacitor-firebase/firestore",
-  "version": "7.2.0",
+  "name": "@dharma-code-chris/capacitor-firebase-firestore",
+  "version": "1.0.0",
   "description": "Capacitor plugin for Firebase Cloud Firestore.",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
@@ -11,7 +11,7 @@
     "android/build.gradle",
     "dist/",
     "ios/Plugin/",
-    "CapacitorFirebaseFirestore.podspec",
+    "DharmaCodeChrisCapacitorFirebaseFirestore.podspec",
     "Package.swift"
   ],
   "author": "Robin Genz <mail@robingenz.dev>",
@@ -19,10 +19,10 @@
   "homepage": "https://capawesome.io/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/capawesome-team/capacitor-firebase.git"
+    "url": "git+https://github.com/dharma-code-chris/capacitor-firebase.git"
   },
   "bugs": {
-    "url": "https://github.com/capawesome-team/capacitor-firebase/issues"
+    "url": "https://github.com/dharma-code-chris/capacitor-firebase/issues"
   },
   "funding": [
     {
