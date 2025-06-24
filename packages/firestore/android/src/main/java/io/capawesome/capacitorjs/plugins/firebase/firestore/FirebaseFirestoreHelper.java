@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import io.capawesome.capacitorjs.plugins.firebase.firestore.classes.constraints.QueryCompositeFilterConstraint;
 import io.capawesome.capacitorjs.plugins.firebase.firestore.classes.constraints.QueryEndAtConstraint;
@@ -57,6 +58,13 @@ public class FirebaseFirestoreHelper {
         if (value.toString().equals("null")) {
             return null;
         } else if (value instanceof JSONObject) {
+            if (((JSONObject) value).has("_methodName")) {
+                return switch (((JSONObject) value).getString("_methodName")) {
+                    case "serverTimestamp" -> FieldValue.serverTimestamp();
+                    case "deleteField" -> FieldValue.delete();
+                    default -> createHashMapFromJSONObject((JSONObject) value);
+                };
+            }
             return createHashMapFromJSONObject((JSONObject) value);
         } else if (value instanceof JSONArray) {
             return createArrayListFromJSONArray((JSONArray) value);

@@ -1,11 +1,11 @@
 import { WebPlugin } from '@capacitor/core';
 import type {
+  Query,
   QueryCompositeFilterConstraint as FirebaseQueryCompositeFilterConstraint,
   QueryConstraint as FirebaseQueryConstraint,
   QueryFieldFilterConstraint as FirebaseQueryFieldFilterConstraint,
   QueryFilterConstraint as FirebaseQueryFilterConstraint,
   QueryNonFilterConstraint as FirebaseQueryNonFilterConstraint,
-  Query,
   Unsubscribe,
 } from 'firebase/firestore';
 import {
@@ -16,6 +16,7 @@ import {
   collectionGroup,
   connectFirestoreEmulator,
   deleteDoc,
+  deleteField,
   disableNetwork,
   doc,
   enableNetwork,
@@ -31,6 +32,7 @@ import {
   or,
   orderBy,
   query,
+  serverTimestamp,
   setDoc,
   startAfter,
   startAt,
@@ -84,7 +86,7 @@ export class FirebaseFirestoreWeb
     const { reference, data } = options;
     const documentReference = await addDoc<DocumentData, DocumentData>(
       collection(firestore, reference),
-      data,
+      this.processDocumentData(data),
     );
     return {
       reference: {
@@ -97,9 +99,13 @@ export class FirebaseFirestoreWeb
   public async setDocument(options: SetDocumentOptions): Promise<void> {
     const firestore = getFirestore();
     const { reference, data, merge } = options;
-    await setDoc<DocumentData, DocumentData>(doc(firestore, reference), data, {
-      merge,
-    });
+    await setDoc<DocumentData, DocumentData>(
+      doc(firestore, reference),
+      this.processDocumentData(data),
+      {
+        merge,
+      },
+    );
   }
 
   public async getDocument<T extends DocumentData>(
@@ -129,7 +135,7 @@ export class FirebaseFirestoreWeb
     const { reference, data } = options;
     await updateDoc<DocumentData, DocumentData>(
       doc(firestore, reference),
-      data,
+      this.processDocumentData(data),
     );
   }
 
@@ -145,13 +151,16 @@ export class FirebaseFirestoreWeb
     const batch = writeBatch(firestore);
     for (const operation of operations) {
       const { type, reference, data, options } = operation;
+      if (!data) {
+        continue;
+      }
       const documentReference = doc(firestore, reference);
       switch (type) {
         case 'set':
-          batch.set(documentReference, data, options ?? {});
+          batch.set(documentReference, this.processDocumentData(data), options ?? {});
           break;
         case 'update':
-          batch.update(documentReference, data ?? {});
+          batch.update(documentReference, this.processDocumentData(data));
           break;
         case 'delete':
           batch.delete(documentReference);
@@ -520,5 +529,30 @@ export class FirebaseFirestoreWeb
     } else {
       return await this.buildFirebaseQueryNonFilterConstraint(queryConstraint);
     }
+  }
+
+  private processDocumentData(data: DocumentData): DocumentData {
+    const processed: DocumentData = {};
+    for (const [key, value] of Object.entries(data)) {
+      if (value && typeof value === 'object') {
+        if ('_methodName' in value) {
+          switch (value._methodName) {
+            case 'serverTimestamp':
+              processed[key] = serverTimestamp();
+              break;
+            case 'deleteField':
+              processed[key] = deleteField();
+              break;
+            default:
+              processed[key] = this.processDocumentData(value);
+          }
+        } else {
+          processed[key] = this.processDocumentData(value);
+        }
+      } else {
+        processed[key] = value;
+      }
+    }
+    return processed;
   }
 }

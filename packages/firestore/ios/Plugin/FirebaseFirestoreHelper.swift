@@ -7,10 +7,36 @@ public class FirebaseFirestoreHelper {
         var map: [String: Any] = [:]
         for key in object.keys {
             if let value = object[key] {
-                map[key] = value
+                map[key] = processValue(value)
             }
         }
         return map
+    }
+
+    private static func processValue(_ value: Any) -> Any {
+        if let jsObject = value as? JSObject {
+            if let methodName = jsObject["_methodName"] as? String {
+                switch methodName {
+                case "serverTimestamp":
+                    return FieldValue.serverTimestamp()
+                case "deleteField":
+                    return FieldValue.delete()
+                default:
+                    break
+                }
+            }
+            var processedMap: [String: Any] = [:]
+            for key in jsObject.keys {
+                if let nestedValue = jsObject[key] {
+                    processedMap[key] = processValue(nestedValue)
+                }
+            }
+            return processedMap
+        }
+        else if let array = value as? [Any] {
+            return array.map { processValue($0) }
+        }
+        return value
     }
 
     public static func createJSObjectFromHashMap(_ map: [String: Any]?) -> JSObject? {

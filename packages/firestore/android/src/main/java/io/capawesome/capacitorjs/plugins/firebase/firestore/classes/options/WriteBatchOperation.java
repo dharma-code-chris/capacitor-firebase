@@ -1,6 +1,7 @@
 package io.capawesome.capacitorjs.plugins.firebase.firestore.classes.options;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.getcapacitor.JSObject;
 import io.capawesome.capacitorjs.plugins.firebase.firestore.FirebaseFirestoreHelper;
 import java.util.Map;
@@ -39,6 +40,7 @@ public class WriteBatchOperation {
         return data;
     }
 
+    @Nullable
     public SetOptions getOptions() {
         return options;
     }

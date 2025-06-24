@@ -803,6 +803,25 @@ export interface DocumentData {
 }
 
 /**
+ * Sentinel values that can be used when writing document fields with `set()`
+ * or `update()`.
+ */
+export interface FieldValue {
+  /**
+   * The public API endpoint that returns this class.
+   */
+  _methodName: string;
+}
+
+export interface ServerTimestamp extends FieldValue {
+  _methodName: 'serverTimestamp';
+}
+
+export interface DeleteField extends FieldValue {
+  _methodName: 'deleteField';
+}
+
+/**
  * @since 5.2.0
  */
 export type QueryOperator =
