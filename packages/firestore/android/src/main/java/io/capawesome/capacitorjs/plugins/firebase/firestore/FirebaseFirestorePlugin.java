@@ -1,6 +1,5 @@
 package io.capawesome.capacitorjs.plugins.firebase.firestore;
 
-import androidx.annotation.Nullable;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Logger;
@@ -8,6 +7,7 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
+
 import io.capawesome.capacitorjs.plugins.firebase.firestore.classes.options.AddCollectionGroupSnapshotListenerOptions;
 import io.capawesome.capacitorjs.plugins.firebase.firestore.classes.options.AddCollectionSnapshotListenerOptions;
 import io.capawesome.capacitorjs.plugins.firebase.firestore.classes.options.AddDocumentOptions;
@@ -24,7 +24,6 @@ import io.capawesome.capacitorjs.plugins.firebase.firestore.classes.options.Writ
 import io.capawesome.capacitorjs.plugins.firebase.firestore.interfaces.EmptyResultCallback;
 import io.capawesome.capacitorjs.plugins.firebase.firestore.interfaces.NonEmptyResultCallback;
 import io.capawesome.capacitorjs.plugins.firebase.firestore.interfaces.Result;
-import io.capawesome.capacitorjs.plugins.firebase.firestore.interfaces.ResultCallback;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -404,8 +403,9 @@ public class FirebaseFirestorePlugin extends Plugin {
                 call.reject(ERROR_REFERENCE_MISSING);
                 return;
             }
+            JSObject compositeFilter = call.getObject("compositeFilter", null);
 
-            GetCountFromServerOptions options = new GetCountFromServerOptions(reference);
+            GetCountFromServerOptions options = new GetCountFromServerOptions(reference, compositeFilter);
             NonEmptyResultCallback callback = new NonEmptyResultCallback() {
                 @Override
                 public void success(Result result) {

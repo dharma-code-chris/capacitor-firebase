@@ -229,7 +229,13 @@ public class FirebaseFirestore {
 
     public void getCountFromServer(@NonNull GetCountFromServerOptions options, @NonNull NonEmptyResultCallback callback) {
         String reference = options.getReference();
+        QueryCompositeFilterConstraint compositeFilter = options.getCompositeFilter();
+
         Query query = getFirebaseFirestoreInstance().collection(reference);
+        if (compositeFilter != null) {
+            Filter filter = compositeFilter.toFilter();
+            query = query.where(filter);
+        }
         AggregateQuery countQuery = query.count();
 
         countQuery
