@@ -258,8 +258,9 @@ public class FirebaseFirestorePlugin: CAPPlugin, CAPBridgedPlugin {
             call.reject(errorReferenceMissing)
             return
         }
+        let compositeFilter = call.getObject("compositeFilter")
 
-        let options = GetCountFromServerOptions(reference: reference)
+        let options = GetCountFromServerOptions(reference: reference, compositeFilter: compositeFilter)
 
         implementation?.getCountFromServer(options, completion: { result, error in
             if let error = error {

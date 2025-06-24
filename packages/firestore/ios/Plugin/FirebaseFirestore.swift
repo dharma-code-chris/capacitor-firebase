@@ -227,8 +227,15 @@ private actor ListenerRegistrationMap {
 
     @objc public func getCountFromServer(_ options: GetCountFromServerOptions, completion: @escaping (Result?, Error?) -> Void) {
         let reference = options.getReference()
+        let compositeFilter = options.getCompositeFilter()
         let collectionReference = Firestore.firestore().collection(reference)
-        let countQuery = collectionReference.count
+        var query = collectionReference as Query
+        if let compositeFilter = compositeFilter {
+            if let filter = compositeFilter.toFilter() {
+                query = query.whereFilter(filter)
+            }
+        }
+        let countQuery = query.count
 
         Task {
             do {
